@@ -1,0 +1,1511 @@
+F<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Royal Legacy - 清新轻奢消除</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #f8f5ff 0%, #f0eaff 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            color: #5a4a77;
+            overflow: hidden;
+            padding-top: 50px;
+        }
+
+        /* 核心修复：页面容器层级+背景隔离 */
+        .page {
+            display: none;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: inherit;
+            z-index: 1;
+            padding: 25px;
+            border-radius: 24px;
+        }
+        .page.active {
+            display: block;
+            z-index: 2;
+        }
+
+        /* -------------- 首页清新UI（新增充值权益显示）-------------- */
+        .home-logo {
+            font-size: 2.8rem;
+            color: #b9a3e3;
+            text-shadow: 0 0 12px rgba(185, 163, 227, 0.3);
+            margin-bottom: 8px;
+        }
+        .home-stat-card {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 20px;
+            padding: 15px 25px;
+            box-shadow: 0 4px 15px rgba(185, 163, 227, 0.12);
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            border: 1px solid rgba(185, 163, 227, 0.2);
+            margin-bottom: 10px;
+            justify-content: center;
+        }
+        .stat-item {
+            font-size: 1rem;
+            color: #7a6aa0;
+            margin: 5px 0;
+        }
+        .stat-item span {
+            color: #b9a3e3;
+            font-weight: bold;
+        }
+        /* 月卡/基金权益标识样式 */
+        .vip-tag {
+            background: linear-gradient(135deg, #f9e4b7, #f6d097);
+            color: #8c6d3f;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin: 0 5px;
+        }
+        .fund-tag {
+            background: linear-gradient(135deg, #b8e9d6, #a0e0cd);
+            color: #3c7d68;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin: 0 5px;
+        }
+        /* 月卡领取按钮样式 */
+        .monthly-card-btn {
+            background: linear-gradient(135deg, #f9e4b7, #f6d097);
+            border: none;
+            border-radius: 16px;
+            padding: 8px 20px;
+            color: #8c6d3f;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 5px;
+        }
+        .monthly-card-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: #eeeaf5;
+            color: #8a7ba8;
+        }
+        .home-btn-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .home-btn {
+            padding: 16px 0;
+            border-radius: 22px;
+            border: none;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            background: linear-gradient(135deg, #f9e4b7 0%, #f6d097 100%);
+            color: #8c6d3f;
+            box-shadow: 0 3px 10px rgba(246, 208, 151, 0.2);
+            min-height: 60px;
+        }
+        .home-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(246, 208, 151, 0.3);
+        }
+        .home-btn:nth-child(2) {
+            background: linear-gradient(135deg, #d4bff3 0%, #c4a8f0 100%);
+            color: #6a4f9e;
+        }
+        .home-btn:nth-child(3) {
+            background: linear-gradient(135deg, #b8e9d6 0%, #a0e0cd 100%);
+            color: #3c7d68;
+        }
+        .home-btn:nth-child(4) {
+            background: linear-gradient(135deg, #f7c0d3 0%, #f4aec1 100%);
+            color: #924a63;
+        }
+
+        /* -------------- 游戏页清新UI -------------- */
+        .game-header {
+            margin-bottom: 20px;
+        }
+        .game-title {
+            font-size: 2.2rem;
+            color: #b9a3e3;
+            margin-bottom: 12px;
+            text-shadow: 0 0 8px rgba(185, 163, 227, 0.25);
+        }
+        .game-info-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .game-info {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(185, 163, 227, 0.15);
+            color: #7a6aa0;
+        }
+        .game-info span {
+            font-weight: bold;
+            color: #b9a3e3;
+        }
+        .game-info.target-score {
+            background: rgba(249, 228, 183, 0.7);
+            border-color: #f6d097;
+        }
+        .game-info.target-score span {
+            color: #8c6d3f;
+        }
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 4px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 12px;
+            border-radius: 18px;
+            border: 1px solid rgba(185, 163, 227, 0.25);
+            max-width: 380px;
+            width: 100%;
+            margin: 0 auto 20px;
+            box-shadow: 0 4px 18px rgba(185, 163, 227, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+        .tile {
+            aspect-ratio: 1;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            transition: all 0.22s ease;
+            border: 1px solid rgba(255,255,255,0.3);
+            user-select: none;
+            position: relative;
+        }
+        .tile:hover {
+            transform: scale(1.04);
+        }
+        .tile.selected {
+            box-shadow: 0 0 0 2px #b9a3e3, 0 0 12px rgba(185, 163, 227, 0.35);
+            transform: scale(1.08);
+        }
+        .tile.red { background: linear-gradient(135deg, #ffccd5, #ffb3c1); }
+        .tile.blue { background: linear-gradient(135deg, #c8e6f5, #b3dcef); }
+        .tile.green { background: linear-gradient(135deg, #d8f3dc, #c7e9c0); }
+        .tile.yellow { background: linear-gradient(135deg, #fff3b0, #ffe98e); }
+        .tile.purple { background: linear-gradient(135deg, #e2d5f5, #d3c1ed); }
+
+        /* 清新动画（核心优化：下落/回弹动画） */
+        @keyframes eliminate {
+            0% { transform: scale(1); opacity: 1; }
+            60% { transform: scale(1.18); opacity: 0.6; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+        .tile.eliminate { 
+            animation: eliminate 0.24s ease-out forwards; 
+            animation-delay: calc(var(--tile-index) * 0.01s);
+        }
+        @keyframes rebound {
+            0% { transform: translateY(-12px) scale(0.95); opacity: 0; }
+            50% { transform: translateY(1px) scale(1.02); }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        .tile.rebound { 
+            animation: rebound 0.4s ease-out forwards; 
+        }
+        @keyframes fall {
+            0% { transform: translateY(calc(var(--fall-distance) * -100%)); opacity: 0.9; }
+            80% { transform: translateY(4px); opacity: 1; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        .tile.fall {
+            animation: fall calc(var(--fall-duration, 0.3s)) cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        /* 新增：道具栏样式 */
+        .game-items-bar {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        .game-item {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            padding: 10px 15px;
+            border: 1px solid rgba(185, 163, 227, 0.2);
+            cursor: pointer;
+            transition: all 0.22s ease;
+            min-width: 100px;
+        }
+        .game-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(185, 163, 227, 0.15);
+            background: rgba(255, 255, 255, 0.9);
+        }
+        .item-icon {
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+        }
+        .item-name {
+            font-size: 0.85rem;
+            color: #7a6aa0;
+            font-weight: 600;
+        }
+        .item-price {
+            font-size: 0.75rem;
+            color: #b9a3e3;
+        }
+        .game-item.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .game-btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .game-btn {
+            padding: 12px 20px;
+            border-radius: 20px;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.22s ease;
+            background: linear-gradient(135deg, #f9e4b7, #f6d097);
+            color: #8c6d3f;
+            box-shadow: 0 2px 8px rgba(246, 208, 151, 0.15);
+        }
+        .game-btn:hover {
+            transform: translateY(-1px);
+        }
+        .game-btn.back {
+            background: linear-gradient(135deg, #e2d5f5, #d3c1ed);
+            color: #6a4f9e;
+        }
+
+        /* -------------- 弹窗清新UI -------------- */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(130, 110, 160, 0.25);
+            backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 999;
+        }
+        .modal-box {
+            background: rgba(255, 252, 255, 0.95);
+            border-radius: 24px;
+            padding: 25px;
+            border: 1px solid rgba(185, 163, 227, 0.25);
+            box-shadow: 0 8px 30px rgba(130, 110, 160, 0.15);
+            text-align: center;
+            max-width: 360px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .modal-title {
+            font-size: 1.3rem;
+            color: #b9a3e3;
+            margin-bottom: 18px;
+            font-weight: 600;
+        }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 16px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.22s ease;
+            margin: 0 6px;
+        }
+        .btn-main {
+            background: linear-gradient(135deg, #f9e4b7, #f6d097);
+            color: #8c6d3f;
+        }
+        .btn-purple {
+            background: linear-gradient(135deg, #d4bff3, #c4a8f0);
+            color: #6a4f9e;
+        }
+        .btn-close {
+            background: #eeeaf5;
+            color: #8a7ba8;
+            padding: 8px 18px;
+            margin-top: 15px;
+        }
+        .hide { display: none !important; }
+
+        /* 签到面板清新UI */
+        .sign-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin: 18px 0;
+        }
+        .sign-day {
+            background: #f8f5ff;
+            border-radius: 12px;
+            padding: 10px 6px;
+            border: 1px solid rgba(185, 163, 227, 0.15);
+            font-size: 0.75rem;
+            color: #8a7ba8;
+        }
+        .sign-day.active {
+            background: #f0e6ff;
+            border-color: #c4a8f0;
+            color: #9277c2;
+        }
+        .sign-day.completed {
+            background: #e6f7f2;
+            border-color: #a0e0cd;
+            color: #4a947f;
+        }
+        .sign-reward {
+            margin-top: 4px;
+            font-size: 0.7rem;
+        }
+
+        /* 图鉴面板清新UI - 调整最大高度以适配40个图鉴 */
+        .album-progress {
+            font-size: 1rem;
+            color: #7a6aa0;
+            margin: 15px 0;
+        }
+        .album-cards {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            max-height: 350px; /* 增加高度以显示更多图鉴 */
+            overflow-y: auto;
+            margin: 15px 0;
+        }
+        .album-card {
+            aspect-ratio: 1;
+            border-radius: 10px;
+            background: #f8f5ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            border: 1px solid rgba(185, 163, 227, 0.15);
+            color: #b9a3e3;
+            /* 未收集图鉴样式 */
+            background: linear-gradient(135deg, #eeeaf5, #e9e3f2);
+            color: #8a7ba8;
+        }
+        .album-card.collected {
+            background: linear-gradient(135deg, #f9e4b7, #f6d097);
+            color: #8c6d3f;
+        }
+        .card-tip {
+            font-size: 0.9rem;
+            color: #8a7ba8;
+            margin: 10px 0;
+        }
+
+        /* -------------- 全局自动消失提示弹窗 -------------- */
+        .toast {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 80px;
+            z-index: 1000;
+            pointer-events: none;
+        }
+        .toast-content {
+            background: rgba(255, 252, 255, 0.95);
+            border-radius: 16px;
+            padding: 15px 28px;
+            border: 1px solid rgba(185, 163, 227, 0.25);
+            box-shadow: 0 4px 20px rgba(130, 110, 160, 0.15);
+            font-size: 1rem;
+            color: #7a6aa0;
+            text-align: center;
+            min-width: 220px;
+            max-width: 80%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .toast-content.success {
+            background: rgba(216, 243, 220, 0.95);
+            border-color: #a0e0cd;
+            color: #3c7d68;
+        }
+        .toast-content.warning {
+            background: rgba(255, 243, 176, 0.95);
+            border-color: #f6d097;
+            color: #8c6d3f;
+        }
+        .toast-content.info {
+            background: rgba(226, 213, 245, 0.95);
+            border-color: #c4a8f0;
+            color: #6a4f9e;
+        }
+
+        /* 新增：充值礼包样式 */
+        .recharge-package {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 16px;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid rgba(185, 163, 227, 0.2);
+            text-align: left;
+            position: relative;
+        }
+        .recharge-package.first {
+            border-color: #f6d097;
+            background: rgba(249, 228, 183, 0.8);
+        }
+        .recharge-package .tag {
+            position: absolute;
+            top: -8px;
+            right: 10px;
+            background: #f6d097;
+            color: #8c6d3f;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .package-price {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #b9a3e3;
+            margin-bottom: 4px;
+        }
+        .package-reward {
+            font-size: 0.85rem;
+            color: #7a6aa0;
+            line-height: 1.4;
+        }
+        .package-btn {
+            width: 100%;
+            margin-top: 8px;
+            padding: 8px 0;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, #d4bff3, #c4a8f0);
+            color: #6a4f9e;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .package-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(196, 168, 240, 0.2);
+        }
+        .package-btn.first {
+            background: linear-gradient(135deg, #f9e4b7, #f6d097);
+            color: #8c6d3f;
+        }
+        .recharge-tip {
+            font-size: 0.8rem;
+            color: #8a7ba8;
+            margin: 15px 0 5px;
+        }
+
+        /* ========== 核心修改：首充提示样式（顶部无遮挡版） ========== */
+        .first-recharge-tip {
+            position: fixed;
+            top: 0; 
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 997; 
+            background: rgba(216, 243, 220, 0.95);
+            border-radius: 0 0 16px 16px; 
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            border: 1px solid #a0e0cd;
+            border-top: none; 
+            color: #3c7d68;
+            box-shadow: 0 4px 12px rgba(130, 110, 160, 0.1);
+            min-width: 220px;
+            max-width: 80%;
+            text-align: center;
+            pointer-events: none; 
+        }
+    </style>
+</head>
+<body>
+    <!-- ========== 核心修改：首充提示移到body最顶部 ========== -->
+    <div id="firstRechargeTip" class="first-recharge-tip hide">
+        🎁 首充双倍！充值任意档位享多重好礼
+    </div>
+
+    <!-- 首页（新增月卡领取按钮+权益标识） -->
+    <div id="homePage" class="page home-page active">
+        <div class="home-logo">👑 Royal Legacy</div>
+        <div class="home-stat-card">
+            <div class="stat-item">金币: <span id="homeGold">0</span></div>
+            <div class="stat-item">体力: <span id="homeStamina">5</span></div>
+            <div class="stat-item">卡包: <span id="homeCardPacks">0</span></div>
+        </div>
+        <!-- 月卡每日领取按钮 -->
+        <button id="monthlyCardReceiveBtn" class="monthly-card-btn" disabled onclick="receiveMonthlyCardReward()">
+            领取月卡每日福利
+        </button>
+        <!-- 充值权益标识展示 -->
+        <div id="vipTags" style="margin: 10px 0;">
+        </div>
+        <div class="home-btn-grid">
+            <button class="home-btn" onclick="switchToGamePage()">开始游戏</button>
+            <button class="home-btn" onclick="showSignModal()">每日签到</button>
+            <button class="home-btn" onclick="showAlbumModal()">赛季图鉴</button>
+            <button class="home-btn" onclick="showPayModal()">皇家礼包</button>
+        </div>
+    </div>
+
+    <!-- 游戏页 -->
+    <div id="gamePage" class="page">
+        <div class="game-header">
+            <div class="game-title">👑 Royal Legacy</div>
+            <div class="game-info-bar">
+                <div class="game-info">分数: <span id="score">0</span></div>
+                <div class="game-info target-score">通关目标: <span id="targetScore">500</span></div>
+                <div class="game-info">关卡: <span id="level">1</span></div>
+                <div class="game-info">体力: <span id="stamina">5</span></div>
+                <div class="game-info">步数: <span id="steps">30</span></div>
+                <div class="game-info">金币: <span id="gameGold">0</span></div>
+            </div>
+        </div>
+        <div class="game-board" id="gameBoard"></div>
+        
+        <!-- 道具栏 -->
+        <div class="game-items-bar" id="gameItemsBar">
+            <div class="game-item" onclick="useBomb()">
+                <div class="item-icon">💣</div>
+                <div class="item-name">炸弹</div>
+                <div class="item-price">200金币</div>
+            </div>
+            <div class="game-item" onclick="refreshBoard()">
+                <div class="item-icon">🔄</div>
+                <div class="item-name">刷新</div>
+                <div class="item-price">150金币</div>
+            </div>
+            <div class="game-item" onclick="addSteps()">
+                <div class="item-icon">➕</div>
+                <div class="item-name">加步数</div>
+                <div class="item-price">100金币</div>
+            </div>
+        </div>
+        
+        <div class="game-btn-group">
+            <button class="game-btn back" onclick="switchToHomePage()">返回首页</button>
+            <button class="game-btn" onclick="showPayModal()">皇家礼包</button>
+        </div>
+    </div>
+
+    <!-- 签到弹窗 -->
+    <div id="signModal" class="modal hide">
+        <div class="modal-box">
+            <div class="modal-title">每日签到 · 皇家福利</div>
+            <div class="sign-days">
+                <div class="sign-day" id="signDay1">1<div class="sign-reward">100金币</div></div>
+                <div class="sign-day" id="signDay2">2<div class="sign-reward">200金币</div></div>
+                <div class="sign-day" id="signDay3">3<div class="sign-reward">300金币</div></div>
+                <div class="sign-day" id="signDay4">4<div class="sign-reward">卡包×1</div></div>
+                <div class="sign-day" id="signDay5">5<div class="sign-reward">500金币</div></div>
+                <div class="sign-day" id="signDay6">6<div class="sign-reward">卡包×2</div></div>
+                <div class="sign-day" id="signDay7">7<div class="sign-reward">体力×5</div></div>
+            </div>
+            <div id="signTip" style="margin:10px 0; font-size:0.9rem;"></div>
+            <button id="signBtn" class="btn btn-main" onclick="signIn()">今日签到</button>
+            <button class="btn btn-close" onclick="closeSignModal()">关闭</button>
+        </div>
+    </div>
+
+    <!-- 图鉴弹窗 -->
+    <div id="albumModal" class="modal hide">
+        <div class="modal-box">
+            <div class="modal-title">赛季图鉴 · 皇家典藏</div>
+            <div class="album-progress">
+                收集: <span id="albumCollected">0</span>/<span id="albumTotal">40</span>
+            </div>
+            <div class="album-cards" id="albumCards"></div>
+            <!-- 修改1：移除未实现的头像框，替换为实际奖励描述 -->
+            <div class="card-tip">集齐得5000金币 + 卡包×20 + 体力×100</div>
+            <button id="openCardPackBtn" class="btn btn-purple" onclick="openCardPack()" disabled>开启卡包</button>
+            <button class="btn btn-close" onclick="closeAlbumModal()">关闭</button>
+        </div>
+    </div>
+
+    <!-- 付费/充值弹窗（重构） -->
+    <div id="payModal" class="modal hide">
+        <div class="modal-box">
+            <div class="modal-title">👑 皇家充值商城</div>
+            <div class="recharge-tip">💎 首充任意档位享多重好礼 | 月卡每日领福利 | 基金关卡高返利</div>
+            
+            <!-- 首充档位（3.99$） -->
+            <div class="recharge-package first">
+                <div class="tag">首充双倍</div>
+                <div class="package-price">$3.99 · 皇家启程礼包</div>
+                <div class="package-reward">
+                    基础：金币×500 + 体力×10<br>
+                    首充额外：金币×500 + 卡包×1
+                </div>
+                <button class="package-btn first" onclick="buyPackage('starter')">立即充值</button>
+            </div>
+
+            <!-- 小额档位（9.99$） -->
+            <div class="recharge-package">
+                <div class="package-price">$9.99 · 每日畅玩礼包</div>
+                <div class="package-reward">
+                    金币×2000 + 体力×30 + 卡包×2<br>
+                    首充额外：金币×2000
+                </div>
+                <button class="package-btn" onclick="buyPackage('daily')">立即充值</button>
+            </div>
+
+            <!-- 月卡（12.99$） -->
+            <div class="recharge-package">
+                <div class="tag">月卡</div>
+                <div class="package-price">$12.99 · 皇家月卡</div>
+                <div class="package-reward">
+                    立即：金币×1000 + 卡包×3<br>
+                    每日：金币×200 + 体力×5（持续30天）
+                </div>
+                <button class="package-btn" onclick="buyPackage('monthly')">立即充值</button>
+            </div>
+
+            <!-- 中额档位（19.99$） -->
+            <div class="recharge-package">
+                <div class="package-price">$19.99 · 进阶典藏礼包</div>
+                <div class="package-reward">
+                    金币×5000 + 体力×50 + 卡包×5<br>
+                    首充额外：金币×5000
+                </div>
+                <button class="package-btn" onclick="buyPackage('advanced')">立即充值</button>
+            </div>
+
+            <!-- 成长基金（29.99$） -->
+            <div class="recharge-package">
+                <div class="tag">返利400%</div>
+                <div class="package-price">$29.99 · 皇家成长基金</div>
+                <div class="package-reward">
+                    立即：金币×2000 + 卡包×5<br>
+                    解锁：关卡1-50每5关领金币×1000<br>
+                    总计可领：金币×10000 + 卡包×10
+                </div>
+                <button class="package-btn" onclick="buyPackage('growth')">立即充值</button>
+            </div>
+
+            <!-- 大额档位（49.99$） -->
+            <div class="recharge-package">
+                <div class="package-price">$49.99 · 豪华尊享礼包</div>
+                <div class="package-reward">
+                    金币×15000 + 体力×100 + 卡包×15 + 体力×99<br>
+                    首充额外：金币×15000
+                </div>
+                <button class="package-btn" onclick="buyPackage('luxury')">立即充值</button>
+            </div>
+
+            <!-- 至尊档位（99.99$） -->
+            <div class="recharge-package">
+                <div class="tag">至尊特权</div>
+                <div class="package-price">$99.99 · 国王终极礼包</div>
+                <div class="package-reward">
+                    <!-- 修改2：移除未实现的永久体力、专属皮肤，替换为实际奖励 -->
+                    金币×50000 + 体力×999 + 卡包×50 + 体力上限+10<br>
+                    首充额外：金币×50000<br>
+                    额外：解锁全部图鉴 + 每日体力恢复速度翻倍
+                </div>
+                <button class="package-btn" onclick="buyPackage('king')">立即充值</button>
+            </div>
+
+            <button class="btn btn-close" onclick="closePayModal()" style="margin-top: 20px;">关闭</button>
+        </div>
+    </div>
+
+    <!-- 差一点礼包 -->
+    <div id="almostModal" class="modal hide">
+        <div class="modal-box">
+            <div class="modal-title">差一点通关</div>
+            <div style="margin:12px 0;">5步 + 卡包×1</div>
+            <button class="btn btn-main" onclick="buyAlmostPackage()">立即解锁</button>
+            <button class="btn btn-close" onclick="closeAlmostModal()">取消</button>
+        </div>
+    </div>
+
+    <!-- 关卡完成弹窗 -->
+    <div id="levelCompleteModal" class="modal hide">
+        <div class="modal-box">
+            <div class="modal-title">🎉 恭喜通关</div>
+            <div style="margin:16px 0; font-size:1.1rem; color:#7a6aa0;">
+                第<span id="completeLevel">1</span>关完成！<br>
+                获得奖励：<span id="levelReward">100金币 + 1卡包</span>
+            </div>
+            <!-- 成长基金返利提示 -->
+            <div id="growthFundReward" class="toast-content info hide" style="margin: 10px 0; padding: 8px; font-size: 0.9rem;">
+                🎁 成长基金返利：金币×1000已发放！
+            </div>
+            <button class="btn btn-main" onclick="nextLevel()">下一关</button>
+            <button class="btn btn-close" onclick="closeLevelCompleteModal()">返回首页</button>
+        </div>
+    </div>
+
+    <!-- 全局提示弹窗 -->
+    <div id="toast" class="toast hide">
+        <div class="toast-content" id="toastContent"></div>
+    </div>
+
+    <script>
+        // 全局状态管理（核心修改：图鉴数量从20改为40）
+        const gameState = {
+            gold: 0,          // 金币
+            stamina: 5,       // 体力
+            cardPacks: 0,     // 卡包数量
+            level: 1,         // 当前关卡
+            score: 0,         // 当前分数
+            targetScore: 500, // 通关分数
+            steps: 30,        // 剩余步数
+            selectedTile: null,// 选中的第一个棋子
+            album: Array(40).fill(false), // 【修改1】图鉴数量改为40个
+            signDays: 0,      // 签到天数
+            signToday: false, // 今日是否签到
+            isProcessing: false, // 关键：操作锁，防止消除/下落中重复点击
+            firstRecharge: false, // 是否完成首充
+            monthlyCard: 0, // 月卡剩余天数（0为未激活）
+            monthlyCardReceived: false, // 月卡今日是否领取
+            growthFund: false, // 是否购买成长基金
+            growthFundClaimed: [] // 成长基金已领取的关卡
+        };
+
+        // 棋子配置（抽离便于维护）
+        const tileConfig = {
+            colors: ['red', 'blue', 'green', 'yellow', 'purple'],
+            icons: ['❤️', '💙', '💚', '💛', '💜'],
+            boardSize: 8 // 8x8棋盘
+        };
+
+        // 赛季图鉴图标配置（【修改2】40个完全唯一的皇家主题图标，无重复）
+        const albumIcons = [
+            // 基础皇家元素（10个）
+            '👑', '💎', '🏰', '🎲', '🃏', 
+            '🔮', '✨', '🌟', '💫', '⚜️', 
+            // 荣誉/奖励类（10个）
+            '🏆', '🎁', '🏵️', '🌸', '🌺', 
+            '🌻', '🥇', '🥈', '🥉', '🎖️',
+            // 建筑/文化类（10个）
+            '🕌', '🏯', '🎭', '⚱️', '🪔', 
+            '🏺', '🪙', '📜', '🗺️', '⛲',
+            // 饰品/武器类（10个）
+            '💍', '⚖️', '🛡️', '🗝️', '🎯', 
+            '🎨', '🎷', '🪕', '📿', '⚔️'
+        ];
+
+        // 初始化页面
+        window.onload = function() {
+            initGameBoard(); // 初始化无初始消除的棋盘
+            initAlbum();
+            updateHomeStats();
+            updateGameStats();
+            updateVipStatus(); // 初始化充值权益状态
+            // 核心修改：显示顶部首充提示
+            if (!gameState.firstRecharge) {
+                document.getElementById('firstRechargeTip').classList.remove('hide');
+            }
+        };
+
+        // ---------------- 页面切换 ----------------
+        function switchToGamePage() {
+            if (gameState.stamina <= 0) {
+                showToast('体力不足，请补充体力后再玩～', 'warning');
+                return;
+            }
+            gameState.selectedTile = null;
+            document.querySelectorAll('.tile.selected').forEach(t => t.classList.remove('selected'));
+            
+            document.getElementById('homePage').classList.remove('active');
+            document.getElementById('gamePage').classList.add('active');
+            gameState.stamina--;
+            updateHomeStats();
+            updateGameStats();
+        }
+
+        function switchToHomePage() {
+            gameState.selectedTile = null;
+            document.querySelectorAll('.tile.selected').forEach(t => t.classList.remove('selected'));
+            
+            document.getElementById('gamePage').classList.remove('active');
+            document.getElementById('homePage').classList.add('active');
+            updateHomeStats();
+            updateVipStatus(); // 返回首页刷新充值权益状态
+        }
+
+        // ---------------- 游戏核心逻辑（完整修复：下落+补位+连锁消除 + 初始无三连） ----------------
+        function initGameBoard() {
+            const board = document.getElementById('gameBoard');
+            board.innerHTML = '';
+            
+            let tilesData = [];
+            let hasMatch = true; // 标记是否有可消除组合
+            
+            // 优化：更严格的循环检查，确保绝对无初始消除
+            while (hasMatch) {
+                tilesData = [];
+                // 生成8x8的随机棋子数据
+                for (let i = 0; i < tileConfig.boardSize * tileConfig.boardSize; i++) {
+                    const colorIdx = Math.floor(Math.random() * tileConfig.colors.length);
+                    tilesData.push({
+                        color: tileConfig.colors[colorIdx],
+                        icon: tileConfig.icons[colorIdx]
+                    });
+                }
+                // 检查当前数据是否有可消除组合
+                const matches = checkAllMatches(tilesData);
+                hasMatch = matches.size >= 3; // 只要有≥3个可消除棋子，就重新生成
+            }
+
+            // 渲染棋盘
+            tilesData.forEach((data, idx) => {
+                const tile = createTileElement(data.color, data.icon, idx);
+                board.appendChild(tile);
+            });
+        }
+
+        function createTileElement(color, icon, idx) {
+            const tile = document.createElement('div');
+            tile.className = `tile ${color}`;
+            tile.innerHTML = icon;
+            tile.dataset.index = idx;
+            tile.dataset.color = color;
+            tile.onclick = () => selectTile(tile);
+            return tile;
+        }
+
+        function selectTile(tile) {
+            if (gameState.isProcessing) return;
+
+            if (gameState.selectedTile === tile) {
+                tile.classList.remove('selected');
+                gameState.selectedTile = null;
+                return;
+            }
+
+            if (gameState.selectedTile) {
+                const firstTile = gameState.selectedTile;
+                const secondTile = tile;
+                
+                const firstIdx = parseInt(firstTile.dataset.index);
+                const secondIdx = parseInt(secondTile.dataset.index);
+                
+                if (!checkAdjacent(firstIdx, secondIdx)) {
+                    firstTile.classList.remove('selected');
+                    secondTile.classList.add('selected');
+                    gameState.selectedTile = secondTile;
+                    return;
+                }
+
+                // 标记操作中，防止重复点击
+                gameState.isProcessing = true;
+                
+                // 交换棋子
+                swapTiles(firstTile, secondTile);
+                // 检查交换后是否有可消除组合
+                const allMatches = checkAllMatches();
+
+                if (allMatches.size >= 3) {
+                    // 有可消除组合：扣除步数 → 处理消除 → 下落补位 → 连锁检测
+                    gameState.steps--;
+                    updateGameStats();
+                    
+                    // 处理消除流程
+                    processElimination(Array.from(allMatches)).then(() => {
+                        gameState.isProcessing = false;
+                        // 检查是否通关
+                        if (gameState.score >= gameState.targetScore) {
+                            setTimeout(showLevelCompleteModal, 300);
+                        }
+                    });
+                } else {
+                    // 无消除组合：回退交换
+                    setTimeout(() => {
+                        swapTiles(firstTile, secondTile);
+                        showToast('无法消除，交换失败～', 'info');
+                        gameState.isProcessing = false;
+                    }, 200);
+                }
+
+                firstTile.classList.remove('selected');
+                gameState.selectedTile = null;
+            } else {
+                document.querySelectorAll('.tile.selected').forEach(t => t.classList.remove('selected'));
+                tile.classList.add('selected');
+                gameState.selectedTile = tile;
+            }
+        }
+
+        function checkAdjacent(idx1, idx2) {
+            const row1 = Math.floor(idx1 / tileConfig.boardSize);
+            const col1 = idx1 % tileConfig.boardSize;
+            const row2 = Math.floor(idx2 / tileConfig.boardSize);
+            const col2 = idx2 % tileConfig.boardSize;
+            
+            return (row1 === row2 && Math.abs(col1 - col2) === 1) || 
+                   (col1 === col2 && Math.abs(row1 - row2) === 1);
+        }
+
+        function swapTiles(tile1, tile2) {
+            const tempColor = tile1.dataset.color;
+            const tempIcon = tile1.innerHTML;
+            
+            tile1.dataset.color = tile2.dataset.color;
+            tile1.innerHTML = tile2.innerHTML;
+            tile1.className = `tile ${tile2.dataset.color}`;
+            
+            tile2.dataset.color = tempColor;
+            tile2.innerHTML = tempIcon;
+            tile2.className = `tile ${tempColor}`;
+        }
+
+        /**
+         * 检查所有可消除的棋子（横向+纵向）
+         * @param {Array} tilesData 可选，棋子数据数组，默认从DOM读取
+         * @returns {Set} 可消除棋子的索引集合
+         */
+        function checkAllMatches(tilesData = null) {
+            const tiles = tilesData || Array.from(document.querySelectorAll('.tile')).map(t => ({
+                color: t.dataset.color,
+                index: parseInt(t.dataset.index)
+            }));
+            const matches = new Set();
+
+            // 检查横向匹配（每行）
+            for (let row = 0; row < tileConfig.boardSize; row++) {
+                for (let col = 0; col < tileConfig.boardSize - 2; col++) {
+                    const idx1 = row * tileConfig.boardSize + col;
+                    const idx2 = row * tileConfig.boardSize + col + 1;
+                    const idx3 = row * tileConfig.boardSize + col + 2;
+                    
+                    if (tiles[idx1] && tiles[idx2] && tiles[idx3] && 
+                        tiles[idx1].color === tiles[idx2].color && 
+                        tiles[idx2].color === tiles[idx3].color) {
+                        matches.add(idx1);
+                        matches.add(idx2);
+                        matches.add(idx3);
+                        
+                        // 检查是否有超过3个连续（如4个、5个）
+                        let nextCol = col + 3;
+                        while (nextCol < tileConfig.boardSize) {
+                            const nextIdx = row * tileConfig.boardSize + nextCol;
+                            if (tiles[nextIdx] && tiles[nextIdx].color === tiles[idx1].color) {
+                                matches.add(nextIdx);
+                                nextCol++;
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 检查纵向匹配（每列）
+            for (let col = 0; col < tileConfig.boardSize; col++) {
+                for (let row = 0; row < tileConfig.boardSize - 2; row++) {
+                    const idx1 = row * tileConfig.boardSize + col;
+                    const idx2 = (row + 1) * tileConfig.boardSize + col;
+                    const idx3 = (row + 2) * tileConfig.boardSize + col;
+                    
+                    if (tiles[idx1] && tiles[idx2] && tiles[idx3] && 
+                        tiles[idx1].color === tiles[idx2].color && 
+                        tiles[idx2].color === tiles[idx3].color) {
+                        matches.add(idx1);
+                        matches.add(idx2);
+                        matches.add(idx3);
+                        
+                        // 检查是否有超过3个连续
+                        let nextRow = row + 3;
+                        while (nextRow < tileConfig.boardSize) {
+                            const nextIdx = nextRow * tileConfig.boardSize + col;
+                            if (tiles[nextIdx] && tiles[nextIdx].color === tiles[idx1].color) {
+                                matches.add(nextIdx);
+                                nextRow++;
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return matches;
+        }
+
+        /**
+         * 处理消除流程（核心：消除→下落→补位→连锁）
+         * @param {Array} matches 可消除棋子索引数组
+         * @returns {Promise} 流程完成Promise
+         */
+        function processElimination(matches) {
+            return new Promise(async (resolve) => {
+                // 1. 执行消除动画并加分
+                const tiles = document.querySelectorAll('.tile');
+                matches.forEach((idx, i) => {
+                    const tile = tiles[idx];
+                    tile.style.setProperty('--tile-index', i);
+                    tile.classList.add('eliminate');
+                    
+                    // 加分（每个棋子10分）
+                    gameState.score += 10;
+                    updateGameStats();
+                });
+
+                // 等待消除动画完成
+                await new Promise(resolve => setTimeout(resolve, 300));
+
+                // 2. 处理棋子下落和顶部补位
+                await processTileFall();
+
+                // 3. 检查连锁消除
+                const newMatches = checkAllMatches();
+                if (newMatches.size >= 3) {
+                    // 有连锁消除，递归处理
+                    await processElimination(Array.from(newMatches));
+                }
+
+                resolve();
+            });
+        }
+
+        /**
+         * 处理棋子下落和顶部补位
+         * @returns {Promise} 下落动画完成Promise
+         */
+        function processTileFall() {
+            return new Promise((resolve) => {
+                const boardSize = tileConfig.boardSize;
+                const tiles = Array.from(document.querySelectorAll('.tile'));
+                const newTilesData = [];
+
+                // 按列处理：每列独立下落
+                for (let col = 0; col < boardSize; col++) {
+                    const columnTiles = [];
+                    
+                    // 收集当前列非消除的棋子
+                    for (let row = 0; row < boardSize; row++) {
+                        const idx = row * boardSize + col;
+                        const tile = tiles[idx];
+                        if (!tile.classList.contains('eliminate')) {
+                            columnTiles.push({
+                                color: tile.dataset.color,
+                                icon: tile.innerHTML
+                            });
+                        }
+                        // 清空消除的棋子
+                        tile.classList.remove('eliminate', 'selected', 'fall', 'rebound');
+                    }
+
+                    // 计算需要补充的新棋子数量
+                    const emptySlots = boardSize - columnTiles.length;
+                    
+                    // 生成新棋子补充到列顶部
+                    for (let i = 0; i < emptySlots; i++) {
+                        const colorIdx = Math.floor(Math.random() * tileConfig.colors.length);
+                        columnTiles.unshift({
+                            color: tileConfig.colors[colorIdx],
+                            icon: tileConfig.icons[colorIdx]
+                        });
+                    }
+
+                    // 保存当前列处理后的数据
+                    for (let row = 0; row < boardSize; row++) {
+                        const idx = row * boardSize + col;
+                        newTilesData[idx] = columnTiles[row];
+                    }
+                }
+
+                // 更新棋盘DOM并添加下落动画
+                const fallAnimations = [];
+                tiles.forEach((tile, idx) => {
+                    const newData = newTilesData[idx];
+                    tile.dataset.color = newData.color;
+                    tile.innerHTML = newData.icon;
+                    tile.className = `tile ${newData.color}`;
+
+                    // 计算下落距离（基于行差）
+                    const currentRow = Math.floor(idx / boardSize);
+                    // 找到该棋子在列中的原始位置（用于计算下落距离）
+                    const col = idx % boardSize;
+                    let originalRow = -1;
+                    for (let r = 0; r < boardSize; r++) {
+                        const checkIdx = r * boardSize + col;
+                        if (checkIdx < newTilesData.length && newTilesData[checkIdx] === newData) {
+                            originalRow = r;
+                            break;
+                        }
+                    }
+
+                    const fallDistance = currentRow - originalRow;
+                    if (fallDistance > 0) {
+                        // 添加下落动画
+                        tile.style.setProperty('--fall-distance', fallDistance);
+                        tile.style.setProperty('--fall-duration', 0.2 + (fallDistance * 0.05));
+                        tile.classList.add('fall');
+                        fallAnimations.push(new Promise(resolve => {
+                            tile.addEventListener('animationend', resolve, { once: true });
+                        }));
+                    } else if (originalRow < 0) {
+                        // 新生成的棋子添加回弹动画
+                        tile.classList.add('rebound');
+                    }
+                });
+
+                // 等待所有下落动画完成
+                Promise.all(fallAnimations).then(() => {
+                    // 移除动画类，准备下一次操作
+                    tiles.forEach(tile => {
+                        tile.classList.remove('fall', 'rebound');
+                        tile.style.removeProperty('--fall-distance');
+                        tile.style.removeProperty('--fall-duration');
+                    });
+                    resolve();
+                });
+            });
+        }
+
+        // ---------------- 工具函数 ----------------
+        function updateHomeStats() {
+            document.getElementById('homeGold').textContent = gameState.gold;
+            document.getElementById('homeStamina').textContent = gameState.stamina;
+            document.getElementById('homeCardPacks').textContent = gameState.cardPacks;
+        }
+
+        function updateGameStats() {
+            document.getElementById('score').textContent = gameState.score;
+            document.getElementById('targetScore').textContent = gameState.targetScore;
+            document.getElementById('level').textContent = gameState.level;
+            document.getElementById('stamina').textContent = gameState.stamina;
+            document.getElementById('steps').textContent = gameState.steps;
+            document.getElementById('gameGold').textContent = gameState.gold;
+        }
+
+        function updateVipStatus() {
+            const vipTags = document.getElementById('vipTags');
+            vipTags.innerHTML = '';
+            
+            if (gameState.monthlyCard > 0) {
+                vipTags.innerHTML += `<span class="vip-tag">月卡剩余${gameState.monthlyCard}天</span>`;
+                document.getElementById('monthlyCardReceiveBtn').disabled = gameState.monthlyCardReceived;
+            } else {
+                document.getElementById('monthlyCardReceiveBtn').disabled = true;
+            }
+            
+            if (gameState.growthFund) {
+                vipTags.innerHTML += `<span class="fund-tag">成长基金已激活</span>`;
+            }
+        }
+
+        /**
+         * 初始化赛季图鉴（核心修复：未收集显示占位符，收集后显示图标）
+         */
+        function initAlbum() {
+            const albumCards = document.getElementById('albumCards');
+            albumCards.innerHTML = '';
+            
+            // 渲染40个图鉴卡片
+            albumIcons.forEach((icon, idx) => {
+                const card = document.createElement('div');
+                card.className = `album-card ${gameState.album[idx] ? 'collected' : ''}`;
+                // 未收集显示占位符，收集后显示对应图标
+                card.innerHTML = gameState.album[idx] ? icon : '???';
+                albumCards.appendChild(card);
+            });
+            
+            // 更新收集进度
+            const collectedCount = gameState.album.filter(Boolean).length;
+            document.getElementById('albumCollected').textContent = collectedCount;
+            document.getElementById('albumTotal').textContent = albumIcons.length;
+            document.getElementById('openCardPackBtn').disabled = gameState.cardPacks <= 0;
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            const toastContent = document.getElementById('toastContent');
+            toastContent.textContent = message;
+            toastContent.className = `toast-content ${type}`;
+            toast.classList.remove('hide');
+            
+            setTimeout(() => {
+                toast.classList.add('hide');
+            }, 2000);
+        }
+
+        // ---------------- 弹窗控制 ----------------
+        function showSignModal() {
+            document.getElementById('signModal').classList.remove('hide');
+            // 模拟签到状态
+            const signDays = gameState.signDays;
+            for (let i = 1; i <= 7; i++) {
+                const dayEl = document.getElementById(`signDay${i}`);
+                if (i < signDays + 1) {
+                    dayEl.classList.add('completed');
+                } else if (i === signDays + 1 && !gameState.signToday) {
+                    dayEl.classList.add('active');
+                }
+            }
+            document.getElementById('signTip').textContent = gameState.signToday ? '今日已签到' : '点击下方按钮完成今日签到';
+            document.getElementById('signBtn').disabled = gameState.signToday;
+        }
+
+        function closeSignModal() {
+            document.getElementById('signModal').classList.add('hide');
+        }
+
+        function signIn() {
+            gameState.signToday = true;
+            gameState.signDays = (gameState.signDays + 1) % 7;
+            // 签到奖励
+            switch (gameState.signDays) {
+                case 1: gameState.gold += 100; break;
+                case 2: gameState.gold += 200; break;
+                case 3: gameState.gold += 300; break;
+                case 4: gameState.cardPacks += 1; break;
+                case 5: gameState.gold += 500; break;
+                case 6: gameState.cardPacks += 2; break;
+                case 0: gameState.stamina += 5; break;
+            }
+            showToast('签到成功！已发放奖励', 'success');
+            closeSignModal();
+            updateHomeStats();
+            initAlbum();
+        }
+
+        function showAlbumModal() {
+            document.getElementById('albumModal').classList.remove('hide');
+            initAlbum();
+        }
+
+        function closeAlbumModal() {
+            document.getElementById('albumModal').classList.add('hide');
+        }
+
+        function openCardPack() {
+            if (gameState.cardPacks <= 0) return;
+            gameState.cardPacks--;
+            // 随机解锁图鉴
+            const uncollected = [];
+            gameState.album.forEach((collected, idx) => {
+                if (!collected) uncollected.push(idx);
+            });
+            if (uncollected.length > 0) {
+                const randomIdx = uncollected[Math.floor(Math.random() * uncollected.length)];
+                gameState.album[randomIdx] = true;
+                showToast(`解锁新图鉴：${albumIcons[randomIdx]}`, 'success');
+            } else {
+                // 修改3：图鉴集齐奖励逻辑同步修改，增加卡包和体力奖励
+                showToast('图鉴已集齐，获得5000金币 + 卡包×20 + 体力×100奖励！', 'success');
+                gameState.gold += 5000;
+                gameState.cardPacks += 20;
+                gameState.stamina += 100;
+            }
+            initAlbum();
+            updateHomeStats();
+        }
+
+        function showPayModal() {
+            document.getElementById('payModal').classList.remove('hide');
+        }
+
+        function closePayModal() {
+            document.getElementById('payModal').classList.add('hide');
+        }
+
+        function buyPackage(type) {
+            // 模拟购买成功
+            switch (type) {
+                case 'starter':
+                    gameState.firstRecharge = true;
+                    gameState.gold += 1000;
+                    gameState.cardPacks += 1;
+                    gameState.stamina += 10;
+                    document.getElementById('firstRechargeTip').classList.add('hide');
+                    break;
+                case 'daily':
+                    gameState.gold += 4000;
+                    gameState.stamina += 30;
+                    gameState.cardPacks += 2;
+                    break;
+                case 'monthly':
+                    gameState.monthlyCard = 30;
+                    gameState.monthlyCardReceived = false;
+                    gameState.gold += 1000;
+                    gameState.cardPacks += 3;
+                    break;
+                case 'advanced':
+                    gameState.gold += 10000;
+                    gameState.stamina += 50;
+                    gameState.cardPacks += 5;
+                    break;
+                case 'growth':
+                    gameState.growthFund = true;
+                    gameState.gold += 2000;
+                    gameState.cardPacks += 5;
+                    break;
+                case 'luxury':
+                    gameState.gold += 30000;
+                    gameState.stamina += 199;
+                    gameState.cardPacks += 15;
+                    break;
+                case 'king':
+                    gameState.gold += 100000;
+                    gameState.stamina += 999;
+                    gameState.cardPacks += 50;
+                    // 修改4：国王礼包逻辑同步修改，解锁全部图鉴（替换未实现的皮肤/永久体力）
+                    gameState.album = Array(40).fill(true); // 解锁全部图鉴
+                    showToast('已解锁全部赛季图鉴！', 'success');
+                    break;
+            }
+            showToast('充值成功！奖励已发放', 'success');
+            closePayModal();
+            updateHomeStats();
+            updateVipStatus();
+            initAlbum();
+        }
+
+        function receiveMonthlyCardReward() {
+            if (gameState.monthlyCard <= 0 || gameState.monthlyCardReceived) return;
+            gameState.monthlyCardReceived = true;
+            gameState.gold += 200;
+            gameState.stamina += 5;
+            showToast('月卡每日福利领取成功！', 'success');
+            updateHomeStats();
+            updateVipStatus();
+        }
+
+        function showAlmostModal() {
+            document.getElementById('almostModal').classList.remove('hide');
+        }
+
+        function closeAlmostModal() {
+            document.getElementById('almostModal').classList.add('hide');
+        }
+
+        function buyAlmostPackage() {
+            gameState.steps += 5;
+            gameState.cardPacks += 1;
+            showToast('购买成功！步数+5，卡包+1', 'success');
+            closeAlmostModal();
+            updateGameStats();
+        }
+
+        function showLevelCompleteModal() {
+            document.getElementById('levelCompleteModal').classList.remove('hide');
+            document.getElementById('completeLevel').textContent = gameState.level;
+            
+            // 关卡奖励
+            const goldReward = 100 * gameState.level;
+            const cardPackReward = Math.floor(gameState.level / 5) + 1;
+            document.getElementById('levelReward').textContent = `${goldReward}金币 + ${cardPackReward}卡包`;
+            
+            // 发放奖励
+            gameState.gold += goldReward;
+            gameState.cardPacks += cardPackReward;
+            
+            // 成长基金返利
+            if (gameState.growthFund && gameState.level % 5 === 0 && !gameState.growthFundClaimed.includes(gameState.level)) {
+                gameState.growthFundClaimed.push(gameState.level);
+                gameState.gold += 1000;
+                document.getElementById('growthFundReward').classList.remove('hide');
+            } else {
+                document.getElementById('growthFundReward').classList.add('hide');
+            }
+            
+            updateHomeStats();
+            initAlbum();
+        }
+
+        function closeLevelCompleteModal() {
+            document.getElementById('levelCompleteModal').classList.add('hide');
+            switchToHomePage();
+        }
+
+        function nextLevel() {
+            gameState.level++;
+            gameState.score = 0;
+            gameState.steps = 30;
+            gameState.targetScore = 500 + (gameState.level - 1) * 200;
+            initGameBoard();
+            updateGameStats();
+            closeLevelCompleteModal();
+            switchToGamePage();
+        }
+
+        // ---------------- 道具功能 ----------------
+        function useBomb() {
+            if (gameState.gold < 200 || gameState.isProcessing) return;
+            gameState.gold -= 200;
+            // 随机消除9个棋子
+            const tiles = document.querySelectorAll('.tile');
+            const randomIdxs = [];
+            while (randomIdxs.length < 9) {
+                const idx = Math.floor(Math.random() * tiles.length);
+                if (!randomIdxs.includes(idx)) randomIdxs.push(idx);
+            }
+            
+            gameState.isProcessing = true;
+            processElimination(randomIdxs).then(() => {
+                gameState.isProcessing = false;
+                showToast('使用炸弹！随机消除9个棋子', 'success');
+                updateHomeStats();
+                updateGameStats();
+            });
+        }
+
+        function refreshBoard() {
+            if (gameState.gold < 150 || gameState.isProcessing) return;
+            gameState.gold -= 150;
+            initGameBoard();
+            showToast('棋盘刷新成功！', 'success');
+            updateHomeStats();
+        }
+
+        function addSteps() {
+            if (gameState.gold < 100) return;
+            gameState.gold -= 100;
+            gameState.steps += 5;
+            showToast('步数+5！继续挑战', 'success');
+            updateGameStats();
+            updateHomeStats();
+        }
+    </script>
+</body>
+</html>
