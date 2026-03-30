@@ -367,15 +367,77 @@
                 </div>
             </div>
             
-            <button onclick="RoyalLegacyApp.switchPage('paymentMethodPage')" class="btn btn-primary" style="width: 100%; padding: 14px 0; font-size: 1rem; margin-bottom: 12px;">Proceed to Payment</button>
+            <button onclick="RoyalLegacyApp.switchPage('billingPage')" class="btn btn-primary" style="width: 100%; padding: 14px 0; font-size: 1rem; margin-bottom: 12px;">Proceed to Payment</button>
             <button onclick="RoyalLegacyApp.backToShop()" class="btn btn-secondary" style="width: 100%; padding: 14px 0; font-size: 1rem;">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Billing Information Page -->
+    <div id="billingPage" class="page">
+        <div style="max-width: 450px; margin: 40px auto; padding: 0 20px;">
+            <button onclick="RoyalLegacyApp.backToOrderConfirm()" class="btn btn-secondary" style="margin-bottom: 20px;">← Back</button>
+            <h2 style="text-align: center; margin-bottom: 24px;" class="title-gold">Billing Information</h2>
+            
+            <div class="glass-card" style="margin-bottom: 24px;">
+                <div style="padding: 20px;">
+                    <h3 style="margin-bottom: 16px; font-size: 1.125rem;">Billing Details</h3>
+                    <form id="billingForm" onsubmit="RoyalLegacyApp.handleBillingInfo(event)">
+                        <div style="display: flex; flex-direction: column; gap: 16px;">
+                            <div style="display: flex; gap: 12px;">
+                                <div style="flex: 1;">
+                                    <label style="display: block; margin-bottom: 6px; font-weight: 500;">First Name *</label>
+                                    <input type="text" id="billingFirstName" placeholder="Enter your first name" style="width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); color: var(--text-primary); font-size: 0.9375rem;">
+                                    <div id="billingFirstNameError" style="color: var(--error); font-size: 0.75rem; margin-top: 4px; display: none;"></div>
+                                </div>
+                                <div style="flex: 1;">
+                                    <label style="display: block; margin-bottom: 6px; font-weight: 500;">Last Name *</label>
+                                    <input type="text" id="billingLastName" placeholder="Enter your last name" style="width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); color: var(--text-primary); font-size: 0.9375rem;">
+                                    <div id="billingLastNameError" style="color: var(--error); font-size: 0.75rem; margin-top: 4px; display: none;"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label style="display: block; margin-bottom: 6px; font-weight: 500;">Email *</label>
+                                <input type="email" id="billingEmail" placeholder="Enter your email" style="width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); color: var(--text-primary); font-size: 0.9375rem;">
+                                <div id="billingEmailError" style="color: var(--error); font-size: 0.75rem; margin-top: 4px; display: none;"></div>
+                            </div>
+                            
+                            <div>
+                                <label style="display: block; margin-bottom: 6px; font-weight: 500;">Country *</label>
+                                <select id="billingCountry" style="width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); color: #ffffff; font-size: 0.9375rem; appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="%23ffffff"><polygon points="6,0 0,12 12,12"/></svg>'); background-repeat: no-repeat; background-position: right 16px center; background-size: 12px 12px;">
+                                    <option value="" style="color: #ffffff; background: rgba(0,0,0,0.8);">Select your country</option>
+                                    <option value="US" style="color: #ffffff; background: rgba(0,0,0,0.8);">United States</option>
+                                    <option value="CN" style="color: #ffffff; background: rgba(0,0,0,0.8);">China</option>
+                                    <option value="GB" style="color: #ffffff; background: rgba(0,0,0,0.8);">United Kingdom</option>
+                                    <option value="CA" style="color: #ffffff; background: rgba(0,0,0,0.8);">Canada</option>
+                                    <option value="AU" style="color: #ffffff; background: rgba(0,0,0,0.8);">Australia</option>
+                                    <option value="JP" style="color: #ffffff; background: rgba(0,0,0,0.8);">Japan</option>
+                                    <option value="KR" style="color: #ffffff; background: rgba(0,0,0,0.8);">South Korea</option>
+                                    <option value="DE" style="color: #ffffff; background: rgba(0,0,0,0.8);">Germany</option>
+                                    <option value="FR" style="color: #ffffff; background: rgba(0,0,0,0.8);">France</option>
+                                    <option value="IN" style="color: #ffffff; background: rgba(0,0,0,0.8);">India</option>
+                                </select>
+                                <div id="billingCountryError" style="color: var(--error); font-size: 0.75rem; margin-top: 4px; display: none;"></div>
+                            </div>
+                            
+                            <div>
+                                <label style="display: block; margin-bottom: 6px; font-weight: 500;">Billing Address (Optional)</label>
+                                <textarea id="billingAddress" placeholder="Enter your billing address" style="width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); color: var(--text-primary); font-size: 0.9375rem; resize: vertical; min-height: 80px;"></textarea>
+                                <div id="billingAddressError" style="color: var(--error); font-size: 0.75rem; margin-top: 4px; display: none;"></div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px 0; font-size: 1rem;">Continue to Payment</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Payment Method Page -->
     <div id="paymentMethodPage" class="page">
         <div style="max-width: 450px; margin: 40px auto; padding: 0 20px;">
-            <button onclick="RoyalLegacyApp.backToOrderConfirm()" class="btn btn-secondary" style="margin-bottom: 20px;">← Back</button>
+            <button onclick="RoyalLegacyApp.backToBilling()" class="btn btn-secondary" style="margin-bottom: 20px;">← Back</button>
             <h2 style="text-align: center; margin-bottom: 24px;" class="title-gold">Select Payment Method</h2>
             
             <div class="glass-card" style="margin-bottom: 24px;">
@@ -666,7 +728,8 @@
             <div style="text-align: center; margin-bottom: 32px;">
                 <h1 style="font-size: 1.75rem; margin-bottom: 8px;" class="title-gold">👑 Royal Legacy</h1>
                 <h2 style="font-size: 1.25rem; color: var(--text-primary);">Create Account</h2>
-                <p style="color: var(--text-secondary); margin-top: 8px;">Start your royal adventure today</p>
+                <p style="color: var(--text-secondary); margin-top: 8px;">Create your account with just a username and password</p>
+                <p style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 4px;">Billing information will be collected at checkout</p>
             </div>
             
             <div class="glass-card" style="margin-bottom: 24px;">
@@ -676,42 +739,6 @@
                             <label style="display: block; margin-bottom: 6px; font-weight: 500;">Username</label>
                             <input type="text" id="registerUsername" placeholder="Choose a username" style="width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); color: var(--text-primary); font-size: 0.9375rem;">
                             <div id="registerUsernameError" style="color: var(--error); font-size: 0.75rem; margin-top: 4px; display: none;"></div>
-                        </div>
-                        
-                        <div>
-                            <label style="display: block; margin-bottom: 6px; font-weight: 500;">First Name</label>
-                            <input type="text" id="registerFirstName" placeholder="Enter your first name" style="width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); color: var(--text-primary); font-size: 0.9375rem;">
-                            <div id="registerFirstNameError" style="color: var(--error); font-size: 0.75rem; margin-top: 4px; display: none;"></div>
-                        </div>
-                        
-                        <div>
-                            <label style="display: block; margin-bottom: 6px; font-weight: 500;">Last Name</label>
-                            <input type="text" id="registerLastName" placeholder="Enter your last name" style="width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); color: var(--text-primary); font-size: 0.9375rem;">
-                            <div id="registerLastNameError" style="color: var(--error); font-size: 0.75rem; margin-top: 4px; display: none;"></div>
-                        </div>
-                        
-                        <div>
-                            <label style="display: block; margin-bottom: 6px; font-weight: 500;">Email</label>
-                            <input type="email" id="registerEmail" placeholder="Enter your email" style="width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); color: var(--text-primary); font-size: 0.9375rem;">
-                            <div id="registerEmailError" style="color: var(--error); font-size: 0.75rem; margin-top: 4px; display: none;"></div>
-                        </div>
-                        
-                        <div>
-                            <label style="display: block; margin-bottom: 6px; font-weight: 500;">Country</label>
-                            <select id="registerCountry" style="width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); color: #ffffff; font-size: 0.9375rem; appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="%23ffffff"><polygon points="6,0 0,12 12,12"/></svg>'); background-repeat: no-repeat; background-position: right 16px center; background-size: 12px 12px;">
-                                <option value="" style="color: #ffffff; background: rgba(0,0,0,0.8);">Select your country</option>
-                                <option value="US" style="color: #ffffff; background: rgba(0,0,0,0.8);">United States</option>
-                                <option value="CN" style="color: #ffffff; background: rgba(0,0,0,0.8);">China</option>
-                                <option value="GB" style="color: #ffffff; background: rgba(0,0,0,0.8);">United Kingdom</option>
-                                <option value="CA" style="color: #ffffff; background: rgba(0,0,0,0.8);">Canada</option>
-                                <option value="AU" style="color: #ffffff; background: rgba(0,0,0,0.8);">Australia</option>
-                                <option value="JP" style="color: #ffffff; background: rgba(0,0,0,0.8);">Japan</option>
-                                <option value="KR" style="color: #ffffff; background: rgba(0,0,0,0.8);">South Korea</option>
-                                <option value="DE" style="color: #ffffff; background: rgba(0,0,0,0.8);">Germany</option>
-                                <option value="FR" style="color: #ffffff; background: rgba(0,0,0,0.8);">France</option>
-                                <option value="IN" style="color: #ffffff; background: rgba(0,0,0,0.8);">India</option>
-                            </select>
-                            <div id="registerCountryError" style="color: var(--error); font-size: 0.75rem; margin-top: 4px; display: none;"></div>
                         </div>
                         
                         <div>

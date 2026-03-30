@@ -1417,6 +1417,14 @@ const RoyalLegacyApp = {
     
     // 处理支付流程
     processPayment() {
+        // 验证是否已填写账单信息
+        const state = StateManager.get();
+        if (!state.userFirstName || !state.userLastName || !state.userEmail || !state.userCountry) {
+            this.showToast('Please complete billing information first', 'error');
+            this.switchPage('billingPage');
+            return;
+        }
+        
         const selectedMethod = StateManager.get('selectedPaymentMethod');
         if (!selectedMethod) {
             this.showToast('Please select a payment method', 'error');
@@ -1463,6 +1471,77 @@ const RoyalLegacyApp = {
     },
     
     // 处理卡片支付
+    handleBillingInfo(event) {
+        event.preventDefault();
+        
+        const firstName = document.getElementById('billingFirstName').value.trim();
+        const lastName = document.getElementById('billingLastName').value.trim();
+        const email = document.getElementById('billingEmail').value.trim();
+        const country = document.getElementById('billingCountry').value;
+        const address = document.getElementById('billingAddress').value.trim();
+        
+        // 验证表单
+        const isValid = this.validateBillingForm(firstName, lastName, email, country);
+        if (!isValid) return;
+        
+        // 存储用户信息
+        StateManager.set('userFirstName', firstName);
+        StateManager.set('userLastName', lastName);
+        StateManager.set('userEmail', email);
+        StateManager.set('userCountry', country);
+        if (address) {
+            StateManager.set('userAddress', address);
+        }
+        
+        this.showToast('Billing information saved!', 'success');
+        this.switchPage('paymentMethodPage');
+    },
+    
+    backToBilling() {
+        this.switchPage('billingPage');
+    },
+    
+    validateBillingForm(firstName, lastName, email, country) {
+        let isValid = true;
+        
+        // 验证FirstName
+        if (!firstName) {
+            this.showError('billingFirstNameError', 'Please enter your first name');
+            isValid = false;
+        } else {
+            this.hideError('billingFirstNameError');
+        }
+        
+        // 验证LastName
+        if (!lastName) {
+            this.showError('billingLastNameError', 'Please enter your last name');
+            isValid = false;
+        } else {
+            this.hideError('billingLastNameError');
+        }
+        
+        // 验证邮箱
+        if (!email) {
+            this.showError('billingEmailError', 'Please enter your email');
+            isValid = false;
+        } else if (!this.isValidEmail(email)) {
+            this.showError('billingEmailError', 'Please enter a valid email address');
+            isValid = false;
+        } else {
+            this.hideError('billingEmailError');
+        }
+        
+        // 验证国家
+        if (!country) {
+            this.showError('billingCountryError', 'Please select your country');
+            isValid = false;
+        } else {
+            this.hideError('billingCountryError');
+        }
+        
+        return isValid;
+    },
+    
     handleCardPayment(event) {
         event.preventDefault();
         
@@ -1655,25 +1734,17 @@ const RoyalLegacyApp = {
         event.preventDefault();
         
         const username = document.getElementById('registerUsername').value.trim();
-        const firstName = document.getElementById('registerFirstName').value.trim();
-        const lastName = document.getElementById('registerLastName').value.trim();
-        const email = document.getElementById('registerEmail').value.trim();
-        const country = document.getElementById('registerCountry').value;
         const password = document.getElementById('registerPassword').value;
         const confirmPassword = document.getElementById('registerConfirmPassword').value;
         
         // 验证表单
-        const isValid = this.validateRegisterForm(username, firstName, lastName, email, country, password, confirmPassword);
+        const isValid = this.validateRegisterForm(username, password, confirmPassword);
         if (!isValid) return;
         
         // 模拟注册
         StateManager.set('isLoggedIn', true);
         StateManager.set('loginType', 'email');
         StateManager.set('userName', username);
-        StateManager.set('userFirstName', firstName);
-        StateManager.set('userLastName', lastName);
-        StateManager.set('userEmail', email);
-        StateManager.set('userCountry', country);
         StateManager.set('lastLogin', new Date().toISOString());
         
         this.showToast('Account created successfully!', 'success');
@@ -1702,7 +1773,7 @@ const RoyalLegacyApp = {
         return isValid;
     },
     
-    validateRegisterForm(username, firstName, lastName, email, country, password, confirmPassword) {
+    validateRegisterForm(username, password, confirmPassword) {
         let isValid = true;
         
         // 验证用户名
@@ -1714,41 +1785,6 @@ const RoyalLegacyApp = {
             isValid = false;
         } else {
             this.hideError('registerUsernameError');
-        }
-        
-        // 验证FirstName
-        if (!firstName) {
-            this.showError('registerFirstNameError', 'Please enter your first name');
-            isValid = false;
-        } else {
-            this.hideError('registerFirstNameError');
-        }
-        
-        // 验证LastName
-        if (!lastName) {
-            this.showError('registerLastNameError', 'Please enter your last name');
-            isValid = false;
-        } else {
-            this.hideError('registerLastNameError');
-        }
-        
-        // 验证邮箱
-        if (!email) {
-            this.showError('registerEmailError', 'Please enter your email');
-            isValid = false;
-        } else if (!this.isValidEmail(email)) {
-            this.showError('registerEmailError', 'Please enter a valid email address');
-            isValid = false;
-        } else {
-            this.hideError('registerEmailError');
-        }
-        
-        // 验证国家
-        if (!country) {
-            this.showError('registerCountryError', 'Please select your country');
-            isValid = false;
-        } else {
-            this.hideError('registerCountryError');
         }
         
         // 验证密码
